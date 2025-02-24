@@ -1,0 +1,32 @@
+import cv2
+import os
+
+# Load the image
+img = cv2.imread("mypic.jpg")  # Replace with the correct image path
+
+# Take user input
+msg = input("Enter secret message: ")
+password = input("Enter a passcode: ")
+
+# Create dictionaries for character encoding
+d = {chr(i): i for i in range(255)}
+
+# Variables for indexing
+n, m, z = 0, 0, 0
+
+# Embed the message into the image
+for char in msg:
+    img[n, m, z] = d[char]
+    n += 1
+    m += 1
+    z = (z + 1) % 3
+
+# Save and open the encrypted image
+cv2.imwrite("encryptedImage.jpg", img)
+os.system("start encryptedImage.jpg")  # Use 'start' on Windows to open the image
+
+# Save the passcode in a separate file for decryption reference
+with open("passcode.txt", "w") as f:
+    f.write(password)
+
+print("Encryption complete! Encrypted image saved as 'encryptedImage.jpg'.")
