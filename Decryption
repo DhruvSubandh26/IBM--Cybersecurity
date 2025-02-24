@@ -1,0 +1,39 @@
+import cv2
+
+# Load the encrypted image
+img = cv2.imread("encryptedImage.jpg")  # Make sure the encrypted image is in the same directory
+
+# Load the passcode from the file
+try:
+    with open("passcode.txt", "r") as f:
+        saved_password = f.read().strip()
+except FileNotFoundError:
+    print("Passcode file not found. Ensure 'passcode.txt' is available.")
+    exit()
+
+# Create decoding dictionary
+c = {i: chr(i) for i in range(255)}
+
+# Get passcode from user
+pas = input("Enter passcode for decryption: ")
+
+if pas == saved_password:
+    message = ""
+    n, m, z = 0, 0, 0
+
+    # Extract the message
+    while True:
+        char = c[img[n, m, z]]
+        if char == '\0':  # Assuming null character as message termination
+            break
+        message += char
+        n += 1
+        m += 1
+        z = (z + 1) % 3
+
+        if n >= img.shape[0] or m >= img.shape[1]:
+            break  # Stop if we reach the image's end
+
+    print("Decrypted message:", message)
+else:
+    print("Incorrect passcode. Access denied.")
